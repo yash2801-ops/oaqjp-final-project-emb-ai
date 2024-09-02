@@ -8,18 +8,25 @@ def emote_detector():
     text_to_analyze = request.args.get('textToAnalyze')
     response = emotion_detector(text_to_analyze)
 
-    anger_score = str(response[0]['anger'])
-    disgust_score = str(response[1]['disgust'])
-    fear_score = str(response[2]['fear'])
-    joy_score = str(response[3]['joy'])
-    sadness_score = str(response[4]['sadness'])
-    dominant_emote = response[5]['dominant emotion']
+    dominant_emote = None
 
-    ret_string = ("For the given statement, the system response is 'anger' : " + anger_score
-    + ", 'disgust' : " + disgust_score + ", 'fear' : " + fear_score + ", 'joy' : " + joy_score
-    + ", 'sadness' : " + sadness_score + ". The dominant emotion is : " + dominant_emote + ".")
+    try:
+        anger_score = str(response[0]['anger'])
+        disgust_score = str(response[1]['disgust'])
+        fear_score = str(response[2]['fear'])
+        joy_score = str(response[3]['joy'])
+        sadness_score = str(response[4]['sadness'])
+        dominant_emote = response[5]['dominant emotion']
 
-    return ret_string
+        ret_string = ("For the given statement, the system response is 'anger' : " + anger_score
+        + ", 'disgust' : " + disgust_score + ", 'fear' : " + fear_score + ", 'joy' : " + joy_score
+        + ", 'sadness' : " + sadness_score + ". The dominant emotion is : " + dominant_emote + ".")
+        
+    finally:
+        if dominant_emote is not None:
+            return ret_string
+        else:
+            return "Invalid input! Try again"
 
 @app.route("/")
 def render_index_page():

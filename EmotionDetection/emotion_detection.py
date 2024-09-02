@@ -7,16 +7,19 @@ def emotion_detector(text_to_analyse):
     myobj = { "raw_document": { "text": text_to_analyse } }
     response = requests.post(url, json = myobj, headers = header)
     formatted_response = json.loads(response.text)
-    emotion_predictions = formatted_response['emotionPredictions']
-    emotions = ['anger', 'disgust', 'fear', 'joy', 'sadness']
-    dominant_emotion = 'anger'
     output=[]
-    for prediction in emotion_predictions:
-        for i in range(5):
-            output.append({emotions[i]: prediction['emotion'][emotions[i]]})
-            if prediction['emotion'][emotions[i]]>prediction['emotion'][dominant_emotion]:
-                dominant_emotion = emotions[i]
-    output.append({'dominant emotion': dominant_emotion})
+    if response.status_code == 200:
+        emotion_predictions = formatted_response['emotionPredictions']
+        emotions = ['anger', 'disgust', 'fear', 'joy', 'sadness']
+        dominant_emotion = 'anger'
+        for prediction in emotion_predictions:
+            for i in range(5):
+                output.append({emotions[i]: prediction['emotion'][emotions[i]]})
+                if prediction['emotion'][emotions[i]]>prediction['emotion'][dominant_emotion]:
+                    dominant_emotion = emotions[i]
+        output.append({'dominant emotion': dominant_emotion})
+    elif response.status_code == 400:
+        output = None
     return output
 
 
